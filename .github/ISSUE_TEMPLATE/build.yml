@@ -12,7 +12,7 @@ body:
       placeholder: 0
     validations:
       required: true
-   - type: checkboxes
+  - type: checkboxes
     id: upload_depot
     attributes:
       label: upload depot files
@@ -20,7 +20,7 @@ body:
       options:
         - label: upload depot files
           required: true
-   - type: checkboxes
+  - type: checkboxes
     id: upload_src
     attributes:
       label: upload v8 files
