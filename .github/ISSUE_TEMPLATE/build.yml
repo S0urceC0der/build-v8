@@ -9,7 +9,7 @@ body:
     attributes:
       label: commit id
       description: build commit id
-      placeholder: 0
+      placeholder: "0"
     validations:
       required: true
   - type: checkboxes
