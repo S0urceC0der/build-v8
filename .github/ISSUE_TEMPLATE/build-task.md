@@ -1,14 +1,15 @@
 ---
 name: Build Task
 about: Create build task
-title: ''
+title: 'Build task [DATE]'
 labels: ''
 assignees: ''
 
 ---
 
-patch: true
-commit: 0
-upload_depot: false
-upload_src: true
-upload_bin: false
+- platform: ubuntu
+- patch: true
+- commit: 0
+- upload_depot: false
+- upload_src: true
+- upload_bin: true
