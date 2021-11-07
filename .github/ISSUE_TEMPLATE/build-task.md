@@ -1,6 +1,6 @@
 ---
 name: Build Task
-about: Describe this issue template's purpose here.
+about: Create build task
 title: ''
 labels: ''
 assignees: ''
