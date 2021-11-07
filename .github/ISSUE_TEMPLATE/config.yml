@@ -1,0 +1,30 @@
+name: build_task
+description: Build v8 task.
+title: "[BUILD]: [DATE]"
+labels: ["build"]
+
+body:
+  - type: input
+    id: commit
+    attributes:
+      label: commit id
+      description: build commit id
+      placeholder: 0
+    validations:
+      required: true
+   - type: checkboxes
+    id: upload_depot
+    attributes:
+      label: upload depot files
+      description: upload 
+      options:
+        - label: upload depot files
+          required: true
+   - type: checkboxes
+    id: upload_src
+    attributes:
+      label: upload v8 files
+      description: upload 
+      options:
+        - label: upload v8 files
+          required: true
