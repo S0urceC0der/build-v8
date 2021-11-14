@@ -30,7 +30,6 @@ body:
       description: Build v8 files. 
       options:
         - label: enable
-          required: true
 
   - type: checkboxes
     id: upload_src
@@ -39,7 +38,6 @@ body:
       description: Upload v8 files to cowtransfer
       options:
         - label: enable
-          required: true
           
   - type: checkboxes
     id: clean_git
@@ -48,4 +46,3 @@ body:
       description: Clean git files to minify the package size.
       options:
         - label: enable
-          required: true
