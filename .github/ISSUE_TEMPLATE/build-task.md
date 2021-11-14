@@ -7,9 +7,18 @@ assignees: ''
 
 ---
 
+### >>commit<<
+
+0
+
+### >>platform<<
+
+debian
+
+### >>option<<
+
 - platform: ubuntu
-- patch: true
-- commit: 0
-- upload_depot: false
-- upload_src: true
-- upload_bin: true
+- [ ] patch: true
+- [ ] upload_depot: false
+- [X] upload_src: true
+- [X] upload_bin: true
