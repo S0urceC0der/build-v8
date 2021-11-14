@@ -28,20 +28,31 @@ jobs:
 #           github_token: ${{ secrets.ACCESS_TOKEN }}
 #           issue_id: ${{ github.event.issue.number }}
 #           payload_marker: payload
+      - name: Run Issue form parser
+        id: parse
+        uses: peter-murray/issue-forms-body-parser@v2.0.0
+        with:
+          issue_id: ${{ github.event.issue.number }}
+          separator: '###'
+          label_marker_start: '>>'
+          label_marker_end: '<<
 
       - name: View issue information
         run: |
           echo "Issue title: ${{ github.event.issue.title }}"
           echo "Issue body: ${{ github.event.issue.body }}"
+          echo "${{ steps.parse.outputs.payload.commit_id }}"
+          echo "${{ steps.parse.outputs.payload.upload_depot_files.enable }}"
+          echo "${{ steps.parse.outputs.payload.upload_v8_files.enable }}"
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        env:
-          DATA: ${{ steps.issue_body_parser.outputs.payload }}
-        run: echo "$DATA\n"
+#       # Runs a single command using the runners shell
+#       - name: Run a one-line script
+#         env:
+#           DATA: ${{ steps.issue_body_parser.outputs.payload }}
+#         run: echo "$DATA\n"
 
       # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+#       - name: Run a multi-line script
+#         run: |
+#           echo Add other actions to build,
+#           echo test, and deploy your project.
