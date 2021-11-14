@@ -20,14 +20,6 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-#       - name: Parse Issue Body
-#         uses: peter-murray/issue-body-parser-action@v1
-#         id: issue_body_parser
-#         with:
-#           github_token: ${{ secrets.ACCESS_TOKEN }}
-#           issue_id: ${{ github.event.issue.number }}
-#           payload_marker: payload
       - name: Run Issue form parser
         id: parse
         uses: peter-murray/issue-forms-body-parser@v2.0.0
@@ -35,7 +27,7 @@ jobs:
           issue_id: ${{ github.event.issue.number }}
           separator: '###'
           label_marker_start: '>>'
-          label_marker_end: '<<
+          label_marker_end: '<<'
 
       - name: View issue information
         run: |
