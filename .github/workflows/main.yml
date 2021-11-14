@@ -37,4 +37,4 @@ jobs:
           echo '========'
           echo "${{ steps.parse.outputs.payload }}" | jq .commit_id
           echo "${{ steps.parse.outputs.payload }}" | jq .upload_depot_files.enable
-          echo "${{ steps.parse.outputs.payload }}" | jq .upload_v8_files.enable }}"
+          echo "${{ steps.parse.outputs.payload }}" | jq .upload_v8_files.enable
