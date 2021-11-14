@@ -40,3 +40,9 @@ jobs:
           echo "${{ fromJson(steps.parse.outputs.payload).commit_id }}"
           echo "${{ fromJson(steps.parse.outputs.payload).upload_depot_files.enable }}"
           echo "${{ fromJson(steps.parse.outputs.payload).upload_v8_files.enable }}"
+      - name: Close Issue
+        uses: peter-evans/close-issue@v1
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          comment: |
+            Auto close. Build with commit "${{ fromJson(steps.parse.outputs.payload).commit_id }}"
