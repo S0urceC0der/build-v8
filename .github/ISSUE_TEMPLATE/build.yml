@@ -9,9 +9,19 @@ body:
     attributes:
       label: ">>commit_id<<"
       description: build commit id
+      placeholder: "0"
       value: "0"
     validations:
       required: true
+  
+  - type: dropdown
+    id: build_env
+    attributes:
+      label: ">>build_env<<"
+      options:
+        - ubuntu
+      validations:
+        required: true
   
   - type: checkboxes
     id: build_v8
