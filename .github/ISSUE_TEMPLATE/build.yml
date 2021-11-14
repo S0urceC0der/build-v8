@@ -20,6 +20,7 @@ body:
       label: ">>build_env<<"
       options:
         - ubuntu
+        - mac
       validations:
         required: true
   
