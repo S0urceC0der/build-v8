@@ -1,7 +1,7 @@
 name: build_task
 description: Build v8 task.
-title: "[BUILD]: [DATE]"
-labels: ["build"]
+title: "BUILD TASK: [DATE] [COMMIT]"
+labels: ["build task"]
 
 body:
   - type: input
@@ -9,22 +9,33 @@ body:
     attributes:
       label: ">>commit_id<<"
       description: build commit id
-      placeholder: "0"
+      value: "0"
     validations:
       required: true
+  
   - type: checkboxes
-    id: upload_depot
+    id: build_v8
     attributes:
-      label: ">>upload_depot_files<<"
-      description: upload 
+      label: ">>build_v8<<"
+      description: Build v8 files. 
       options:
         - label: enable
           required: true
+
   - type: checkboxes
     id: upload_src
     attributes:
       label: ">>upload_v8_files<<"
-      description: upload 
+      description: Upload v8 files to cowtransfer
+      options:
+        - label: enable
+          required: true
+          
+  - type: checkboxes
+    id: clean_git
+    attributes:
+      label: ">>clean_git<<"
+      description: Clean git files to minify the package size.
       options:
         - label: enable
           required: true
