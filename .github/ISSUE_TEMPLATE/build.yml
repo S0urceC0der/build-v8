@@ -7,7 +7,7 @@ body:
   - type: input
     id: commit
     attributes:
-      label: >>commit_id<<
+      label: ">>commit_id<<"
       description: build commit id
       placeholder: "0"
     validations:
@@ -15,7 +15,7 @@ body:
   - type: checkboxes
     id: upload_depot
     attributes:
-      label: >>upload_depot_files<<
+      label: ">>upload_depot_files<<"
       description: upload 
       options:
         - label: enable
@@ -23,7 +23,7 @@ body:
   - type: checkboxes
     id: upload_src
     attributes:
-      label: >>upload_v8_files<<
+      label: ">>upload_v8_files<<"
       description: upload 
       options:
         - label: enable
