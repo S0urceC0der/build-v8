@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: issue_test
+name: build_task
 
 # Controls when the workflow will run
 on:
@@ -16,33 +16,50 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Run Issue form parser
-        id: parse
-        uses: peter-murray/issue-forms-body-parser@v2.0.0
-        with:
-          issue_id: ${{ github.event.issue.number }}
-          separator: '###'
-          label_marker_start: '>>'
-          label_marker_end: '<<'
-
-      - name: View issue information
-        run: |
-          echo "Issue title: ${{ github.event.issue.title }}"
-          echo "Issue body: ${{ github.event.issue.body }}"
-          echo "${{ steps.parse.outputs.payload }}"
-          echo '========='
-          echo '{"url": "mozillazg.com"}' |jq .url
-          echo '========'
-          echo "${{ fromJson(steps.parse.outputs.payload).commit_id }}"
-          echo "${{ fromJson(steps.parse.outputs.payload).upload_depot_files.enable }}"
-          echo "${{ fromJson(steps.parse.outputs.payload).upload_v8_files.enable }}"
-      - name: Close Issue
-        uses: peter-evans/close-issue@v1
-        with:
-          issue-number: ${{ github.event.issue.number }}
-          comment: |
-            Auto close. Build with commit "${{ fromJson(steps.parse.outputs.payload).commit_id }}"
+    - name: Checkout
+      uses: actions/checkout@master
+      
+    - name: ParseIssue
+      id: parse
+      uses: peter-murray/issue-forms-body-parser@v2.0.0
+      with:
+        issue_id: ${{ github.event.issue.number }}
+        separator: '###'
+        label_marker_start: '>>'
+        label_marker_end: '<<'
+  
+    - name: InitEnv
+      run: |
+        sudo apt-get update
+        sudo apt-get -y install pkg-config git subversion curl wget build-essential python xz-utils zip p7zip-full
+    
+    - name: ParsedIssueInfo
+      run: |
+        echo "Issue title: ${{ github.event.issue.title }}"
+        echo "${{ fromJson(steps.parse.outputs.payload).commit_id }}"
+        echo "${{ fromJson(steps.parse.outputs.payload).upload_depot_files.enable }}"
+        echo "${{ fromJson(steps.parse.outputs.payload).upload_v8_files.enable }}"
+        
+    - name: CreateTar
+      run: |
+        7z a read.7z README.md 
+    
+    - name: Upload
+      id: upload
+      run: |
+        curl -fsSL git.io/file-transfer | sh
+        ./transfer cow --block 2621440 -s -p 64 --no-progress read.7z 2>&1 | tee cowtransfer.log
+        echo "::set-output name=url::$(cat cowtransfer.log | grep https)"
+        echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https)"
+        
+    - name: Close Issue
+      uses: peter-evans/close-issue@v1
+      with:
+        issue-number: ${{ github.event.issue.number }}
+        comment: |
+          Auto close. Build with commit "${{ fromJson(steps.parse.outputs.payload).commit_id }}"
+          download: "${{steps.upload.outputs.url}}"
