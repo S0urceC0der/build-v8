@@ -34,6 +34,8 @@ jobs:
           echo "Issue title: ${{ github.event.issue.title }}"
           echo "Issue body: ${{ github.event.issue.body }}"
           echo "${{ steps.parse.outputs.payload }}"
+          echo '========='
+          echo '{"url": "mozillazg.com"}' |jq .url
           echo '========'
           echo "${{ steps.parse.outputs.payload }}" | jq .commit_id
           echo "${{ steps.parse.outputs.payload }}" | jq .upload_depot_files.enable
