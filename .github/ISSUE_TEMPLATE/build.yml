@@ -21,7 +21,8 @@ body:
       options:
         - ubuntu
         - mac
-
+    validations:
+      required: true
   
   - type: checkboxes
     id: build_v8
