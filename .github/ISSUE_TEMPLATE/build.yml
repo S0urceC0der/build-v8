@@ -33,9 +33,17 @@ body:
         - label: enable
 
   - type: checkboxes
+    id: upload_depot
+    attributes:
+      label: ">>upload_depot<<"
+      description: Upload depot files to cowtransfer
+      options:
+        - label: enable
+
+  - type: checkboxes
     id: upload_src
     attributes:
-      label: ">>upload_v8_files<<"
+      label: ">>upload_v8<<"
       description: Upload v8 files to cowtransfer
       options:
         - label: enable
