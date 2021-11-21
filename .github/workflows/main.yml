@@ -64,7 +64,7 @@ jobs:
 
       # patch source code
       - name: patch v8
-        if: ${{ fromJson(steps.parse.outputs.payload).commit_id != '0' }} && !cancelled()
+        if: ${{ fromJson(steps.parse.outputs.payload).commit_id }} != '0' && !cancelled()
         run: |
           cd v8
           git reset --hard ${{ steps.args.outputs.commit_id }}
