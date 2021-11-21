@@ -36,7 +36,7 @@ jobs:
           echo "::set-output commid_id=url_2::$${{ fromJson(steps.parse.outputs.payload).commit_id }}"
   
       - name: patch v8
-        if: fromJson(steps.parse.outputs.commit_id != '0' && !cancelled()
+        if: steps.parse.outputs.commit_id != '0' && !cancelled()
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
