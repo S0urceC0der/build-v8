@@ -34,7 +34,7 @@ jobs:
         id: args
         run: |
           echo "commit id: $${{ fromJson(steps.parse.outputs.payload).commit_id }}"
-          echo "::set-output name=commit_id::$${{ fromJson(steps.parse.outputs.payload).commit_id }}"
+          echo "::set-output name=commit_id::${{ fromJson(steps.parse.outputs.payload).commit_id }}"
   
       - name: patch v8
         if: steps.args.outputs.commit_id != '0' && !cancelled()
