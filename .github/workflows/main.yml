@@ -36,6 +36,45 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get -y install pkg-config git subversion curl wget build-essential python xz-utils zip p7zip-full
+        cd /usr/local/bin
+        curl -fsSL git.io/file-transfer | sh
+        
+    # get depot_tools
+    - name: depot_tools
+      run: |
+        git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
+        echo export PATH=\"\$PATH:`pwd`/depot_tools/\" >> ~/.bash_profile
+  
+    # fetch v8 source code
+    - name: fetch v8
+      run: |
+        source ~/.bash_profile
+        fetch v8
+        cd v8
+    
+    # patch source code
+    - name: patch v8
+      if: ${{ fromJson(steps.parse.outputs.payload).commit_id }} != '0' && !cancelled()
+      run: |
+        cd v8
+        git reset --hard ${{ fromJson(steps.parse.outputs.payload).commit_id }}
+        cd ..
+  
+    # build
+    - name: build v8
+      if: ${{ fromJson(steps.parse.outputs.payload).upload_v8_files.enable }} == 'true' && !cancelled()
+      run: |
+        source ~/.bash_profile
+        gclient sync -f
+        cd v8
+        tools/dev/v8gen.py x64.debug -vv
+        ninja -C out.gn/x64.debug d8
+    
+    # compress this file
+    - name: zip depot_tools
+      if: ${{ fromJson(steps.parse.outputs.payload).upload_depot_files.enable }} == 'true' && !cancelled()
+      run: |
+        zip -q -r depot_tools.zip depot_tools
     
     - name: ParsedIssueInfo
       run: |
@@ -44,22 +83,57 @@ jobs:
         echo "${{ fromJson(steps.parse.outputs.payload).upload_depot_files.enable }}"
         echo "${{ fromJson(steps.parse.outputs.payload).upload_v8_files.enable }}"
         
-    - name: CreateTar
+    - name: clean project
+      if: ${{ fromJson(steps.parse.outputs.payload).clean_git.enable }} == 'true' && !cancelled()
       run: |
-        7z a read.7z README.md 
+        rm -rf v8/.git
+        rm -rf v8/third_party/catapult/.git
+        rm -rf v8/third_party/icu/.git
+      
+    # 7zip v8 src
+    - name: 7zip v8_src
+      if: ${{ fromJson(steps.parse.outputs.payload).upload_v8_files.enable }} == 'true' && !cancelled()
+      run: |
+        zip -q -r v8.zip v8
+        7z a v8.7z ./v8.zip -v2048m
     
-    - name: Upload
-      id: upload
+    # upload depot_tools.zip to cowtransfer
+    - name: upload depot_tools
+      id: upload_depot
+      if: ${{ fromJson(steps.parse.outputs.payload).upload_depot_files.enable }} == 'true' && !cancelled()
+      run: |
+        transfer cow --block 2621440 -s -p 64 --no-progress depot_tools.zip 2>&1 | tee cowtransfer.log
+        echo "::set-output name=url::$(cat cowtransfer.log | grep https)"
+   
+    # upload v8.zip to cowtransfer
+    - name: upload v8_src
+      if: ${{ fromJson(steps.parse.outputs.payload).upload_v8_files.enable }} == 'true' && !cancelled()
+      id: upload_v8
       run: |
         curl -fsSL git.io/file-transfer | sh
-        ./transfer cow --block 2621440 -s -p 64 --no-progress read.7z 2>&1 | tee cowtransfer.log
-        echo "::set-output name=url::$(cat cowtransfer.log | grep https)"
-        echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https)"
+        ./transfer cow --block 2621440 -s -p 64 --no-progress v8.7z.001 2>&1 | tee cowtransfer.log
+        echo "::set-output name=url_1::$(cat cowtransfer.log | grep https)"
+        ./transfer cow --block 2621440 -s -p 64 --no-progress v8.7z.002 2>&1 | tee cowtransfer.log
+        echo "::set-output name=url_2::$(cat cowtransfer.log | grep https)"
         
-    - name: Close Issue
-      uses: peter-evans/close-issue@v1
+    - name: Comment Issue
+      uses: jungwinter/comment@v1
       with:
-        issue-number: ${{ github.event.issue.number }}
-        comment: |
-          Auto close. Build with commit "${{ fromJson(steps.parse.outputs.payload).commit_id }}"
-          download: "${{steps.upload.outputs.url}}"
+          type: create
+          issue_number: ${{ github.event.issue.number }}
+          token: ${{ secrets.TOKEN }}
+          body: |
+            Auto close. Build with commit "${{ fromJson(steps.parse.outputs.payload).commit_id }}"
+            depot tool download url: "${{steps.upload_depot.outputs.url}}"
+            v8 files download url part1: "${{steps.upload_v8.outputs.url_1}}"
+            v8 files download url part2: "${{steps.upload_v8.outputs.url_2}}"
+
+#     - name: Close Issue
+#       uses: peter-evans/close-issue@v1
+#       with:
+#         issue-number: ${{ github.event.issue.number }}
+#         comment: |
+#           Auto close. Build with commit "${{ fromJson(steps.parse.outputs.payload).commit_id }}"
+#           depot tool download url: "${{steps.upload_depot.outputs.url}}"
+#           v8 files download url part1: "${{steps.upload_v8.outputs.url_1}}"
+#           v8 files download url part2: "${{steps.upload_v8.outputs.url_2}}"
