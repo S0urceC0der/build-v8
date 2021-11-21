@@ -124,7 +124,7 @@ jobs:
         with:
             type: create
             issue_number: ${{ github.event.issue.number }}
-            token: ${{ secrets.TOKEN }}
+            token: ${{ secrets.ACCESS_TOKEN }}
             body: |
               Auto close. Build with commit "${{ fromJson(steps.parse.outputs.payload).commit_id }}"
               depot tool download url: "${{steps.upload_depot.outputs.url}}"
