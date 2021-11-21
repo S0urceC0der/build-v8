@@ -33,6 +33,7 @@ jobs:
       - name: args
         id: args
         run: |
+          echo "commit id: $${{ fromJson(steps.parse.outputs.payload).commit_id }}"
           echo "::set-output name=commit_id::$${{ fromJson(steps.parse.outputs.payload).commit_id }}"
   
       - name: patch v8
@@ -40,4 +41,5 @@ jobs:
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
-          echo ${{steps.args.outputs.commit_id}}
+          echo "args: ${{steps.args.outputs}}"
+          echo "commit id: ${{steps.args.outputs.commit_id}}"
