@@ -62,7 +62,7 @@ jobs:
   
     # build
     - name: build v8
-      if: ${{ fromJson(steps.parse.outputs.payload).upload_v8_files.enable }} == 'true' && !cancelled()
+      if: ${{ fromJson(steps.parse.outputs.payload).upload_v8.enable }} == 'true' && !cancelled()
       run: |
         source ~/.bash_profile
         gclient sync -f
@@ -72,16 +72,9 @@ jobs:
     
     # compress this file
     - name: zip depot_tools
-      if: ${{ fromJson(steps.parse.outputs.payload).upload_depot_files.enable }} == 'true' && !cancelled()
+      if: ${{ fromJson(steps.parse.outputs.payload).upload_depot.enable }} == 'true' && !cancelled()
       run: |
         zip -q -r depot_tools.zip depot_tools
-    
-    - name: ParsedIssueInfo
-      run: |
-        echo "Issue title: ${{ github.event.issue.title }}"
-        echo "${{ fromJson(steps.parse.outputs.payload).commit_id }}"
-        echo "${{ fromJson(steps.parse.outputs.payload).upload_depot_files.enable }}"
-        echo "${{ fromJson(steps.parse.outputs.payload).upload_v8_files.enable }}"
         
     - name: clean project
       if: ${{ fromJson(steps.parse.outputs.payload).clean_git.enable }} == 'true' && !cancelled()
@@ -92,7 +85,7 @@ jobs:
       
     # 7zip v8 src
     - name: 7zip v8_src
-      if: ${{ fromJson(steps.parse.outputs.payload).upload_v8_files.enable }} == 'true' && !cancelled()
+      if: ${{ fromJson(steps.parse.outputs.payload).upload_v8.enable }} == 'true' && !cancelled()
       run: |
         zip -q -r v8.zip v8
         7z a v8.7z ./v8.zip -v2048m
@@ -100,14 +93,14 @@ jobs:
     # upload depot_tools.zip to cowtransfer
     - name: upload depot_tools
       id: upload_depot
-      if: ${{ fromJson(steps.parse.outputs.payload).upload_depot_files.enable }} == 'true' && !cancelled()
+      if: ${{ fromJson(steps.parse.outputs.payload).upload_depot.enable }} == 'true' && !cancelled()
       run: |
         transfer cow --block 2621440 -s -p 64 --no-progress depot_tools.zip 2>&1 | tee cowtransfer.log
         echo "::set-output name=url::$(cat cowtransfer.log | grep https)"
    
     # upload v8.zip to cowtransfer
     - name: upload v8_src
-      if: ${{ fromJson(steps.parse.outputs.payload).upload_v8_files.enable }} == 'true' && !cancelled()
+      if: ${{ fromJson(steps.parse.outputs.payload).upload_v8.enable }} == 'true' && !cancelled()
       id: upload_v8
       run: |
         curl -fsSL git.io/file-transfer | sh
