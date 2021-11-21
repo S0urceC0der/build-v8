@@ -30,16 +30,24 @@ jobs:
           label_marker_start: '>>'
           label_marker_end: '<<'
 
-      - name: args
-        id: args
-        run: |
-          echo "commit id: $${{ fromJson(steps.parse.outputs.payload).commit_id }}"
-          echo "::set-output name=commit_id::${{ fromJson(steps.parse.outputs.payload).commit_id }}"
+      - name: Comment Issue
+        uses: jungwinter/comment@v1
+        with:
+            type: create
+            issue_number: 3
+            token: ${{ secrets.ACCESS_TOKEN }}
+            body: |
+              Test. 
+#       - name: args
+#         id: args
+#         run: |
+#           echo "commit id: $${{ fromJson(steps.parse.outputs.payload).commit_id }}"
+#           echo "::set-output name=commit_id::${{ fromJson(steps.parse.outputs.payload).commit_id }}"
   
-      - name: patch v8
-        if: steps.args.outputs.commit_id != '0' && !cancelled()
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
-          echo "args: ${{steps.args.outputs}}"
-          echo "commit id: ${{steps.args.outputs.commit_id}}"
+#       - name: patch v8
+#         if: steps.args.outputs.commit_id != '0' && !cancelled()
+#         run: |
+#           echo Add other actions to build,
+#           echo test, and deploy your project.
+#           echo "args: ${{steps.args.outputs}}"
+#           echo "commit id: ${{steps.args.outputs.commit_id}}"
