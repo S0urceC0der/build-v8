@@ -21,14 +21,14 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: ParseIssue
-        id: parse
-        uses: peter-murray/issue-forms-body-parser@v2.0.0
-        with:
-          issue_id: ${{ github.event.issue.number }}
-          separator: '###'
-          label_marker_start: '>>'
-          label_marker_end: '<<'
+#       - name: ParseIssue
+#         id: parse
+#         uses: peter-murray/issue-forms-body-parser@v2.0.0
+#         with:
+#           issue_id: ${{ github.event.issue.number }}
+#           separator: '###'
+#           label_marker_start: '>>'
+#           label_marker_end: '<<'
 
       - name: Comment Issue
         uses: jungwinter/comment@v1
